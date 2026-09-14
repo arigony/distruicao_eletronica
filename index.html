@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Laboratório interativo de Química Geral para Engenharia Química: espectros, energia, orbitais, números quânticos e distribuição eletrônica.">
+<meta name="theme-color" content="#152b50">
+<title>Laboratório Quântico — Engenharia Química</title>
+<style>
+:root{--bg:#f3f6fb;--paper:#fff;--ink:#17243c;--muted:#53637d;--blue:#245bd6;--teal:#007b75;--line:#dce4ef;--soft:#eaf1ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;overflow-wrap:break-word}
+header{background:#152b50;color:white;padding:32px 22px}header>div,main{max-width:1050px;margin:auto}.eyebrow{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:#a9dce8;font-weight:700}
+h1{font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.2;margin:9px 0}header p{max-width:760px;color:#dae6f9}main{padding:22px 16px 45px}
+h2{font-size:clamp(1.35rem,3vw,1.9rem);line-height:1.3;margin:8px 0 16px}h3{font-size:1.1rem;margin:0 0 12px}p{margin:10px 0 16px}
+nav{display:flex;gap:8px;overflow-x:auto;padding:8px 0 18px}button,input,select{font:inherit}button{cursor:pointer;background:var(--blue);color:white;border:0;border-radius:10px;padding:11px 16px;min-height:44px;font-weight:650;touch-action:manipulation}
+button:hover{filter:brightness(.94)}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #edb333;outline-offset:3px}
+button.secondary,nav button{background:white;color:var(--ink);border:1px solid var(--line)}nav button{white-space:nowrap;font-size:.9rem}nav button[aria-current="step"]{background:var(--blue);color:white}nav button.done::after{content:" ✓"}button:disabled{opacity:.4;cursor:default}
+section{background:var(--paper);padding:clamp(18px,4vw,34px);border:1px solid var(--line);border-radius:18px}[hidden]{display:none!important}
+.kicker{color:var(--teal);font-size:.82rem;font-weight:750;text-transform:uppercase;letter-spacing:.08em}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}.card{padding:20px;border:1px solid var(--line);border-radius:13px;margin:16px 0;background:#fcfdff;min-width:0}
+.question{border-left:4px solid var(--blue);padding:14px 18px;background:var(--soft);border-radius:0 10px 10px 0;margin:18px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.actions button{max-width:100%}
+.feedback{padding:13px 16px;border-radius:10px;margin:14px 0;background:#f0f3f8;min-height:48px}.feedback:empty{display:none}
+.feedback.ok{background:#e3f5ed;color:#155b3c}.feedback.no{background:#fff1da;color:#754708}.small{font-size:.88rem;color:var(--muted)}
+.eq{font:clamp(1.1rem,2.8vw,1.5rem)/1.8 Georgia,serif;padding:16px;background:#edf3fb;border-radius:12px;overflow-x:auto;margin:14px 0;text-align:center}
+label{display:block;font-weight:650;margin:12px 0 6px}input[type=range]{width:100%;accent-color:var(--blue)}
+input[type=text],select{width:100%;max-width:100%;padding:11px;border:1px solid #aebed2;border-radius:9px;background:white;color:var(--ink)}
+.output{font-weight:750;color:#164fac;font-size:1.1rem}canvas{display:block;width:100%;height:auto;border-radius:12px}
+#cloud{background:#101f36;max-width:600px;margin:auto}.color-chip{height:35px;border-radius:8px;margin:12px 0}
+.steps-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:20px}.progress-label{font-size:.88rem;color:var(--muted)}progress{width:100%;height:9px;accent-color:var(--teal)}
+.orbitals{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.orbital{background:white;color:var(--ink);border:2px solid #7893ba;min-width:53px;font-size:1.35rem;padding:8px}.orbital small{display:block;font:11px system-ui;color:#53637d}
+.tags{display:flex;gap:12px;flex-wrap:wrap}.tags>div{flex:1;min-width:130px}.term{background:#edf3fb;color:#174990;border:1px solid #ccd9ef}
+.legend{display:flex;gap:8px;flex-wrap:wrap}.legend span{border:1px solid #b8c9e0;border-radius:7px;padding:4px 9px;font-size:.9rem}
+footer{margin:24px 0;color:var(--muted);font-size:.85rem}.skip{position:absolute;left:-9999px}.skip:focus{left:12px;top:12px;z-index:9;background:white;padding:10px;color:#17243c}
+@media(max-width:700px){.grid{grid-template-columns:1fr}section{padding:19px}button{font-size:.94rem}.card{padding:15px}.eq{padding:12px}.steps-footer button{padding:10px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Pular para o laboratório</a>
+<header><div><div class="eyebrow">Química Geral · Engenharia Química · 2º semestre</div>
+<h1>Laboratório Quântico</h1><p>Por que os átomos emitem determinadas cores? Investigue o fenômeno, construa explicações e descubra como os elétrons ocupam os estados permitidos.</p></div></header>
+<main id="main">
+<noscript><p>Ative o JavaScript do navegador para usar as simulações e as verificações.</p></noscript>
+<div class="progress-label" id="progressText" aria-live="polite">0 de 7 verificações concluídas</div>
+<progress id="progress" value="0" max="7" aria-label="Progresso"></progress>
+<nav id="nav" aria-label="Etapas do laboratório"></nav>
+
+<section id="s0"><div class="kicker">1 · Observe um fenômeno</div>
+<h2>Por que um gás excitado não emite todas as cores?</h2>
+<p>Imagine observar a luz de uma lâmpada de hidrogênio através de um espectroscópio. Antes de olhar, faça uma previsão.</p>
+<div class="question">Se as transições entre estados eletrônicos ligados possuem diferenças de energia específicas, o espectro de emissão deve apresentar:</div>
+<div class="actions"><button class="secondary" onclick="predictSpectrum(false)">Uma faixa contínua de cores</button><button onclick="predictSpectrum(true)">Linhas separadas</button></div>
+<div id="f0" class="feedback" role="status" aria-live="polite"></div>
+<div id="spectrumArea" class="card" hidden>
+<canvas id="spectrum" width="900" height="250" aria-label="Comparação entre espectro contínuo e quatro linhas visíveis do hidrogênio"></canvas>
+<div class="legend" aria-label="Comprimentos de onda aproximados"><span>Violeta: 410 nm</span><span>Violeta: 434 nm</span><span>Azul-esverdeado: 486 nm</span><span>Vermelho: 656 nm</span></div>
+<p class="small">Quatro linhas da série de Balmer. As posições são calculadas; as intensidades não estão em escala. A faixa superior é uma referência contínua, não uma simulação de lâmpada específica.</p></div>
+<div class="question">Para discutir: a presença de linhas informa a energia total de cada estado ou as diferenças de energia entre estados?</div>
+<button class="secondary" onclick="feedback('discussion0',true,'Cada linha está associada à diferença de energia entre dois estados. A energia do fóton é o módulo dessa diferença.')">Conferir minha explicação</button>
+<div id="discussion0" class="feedback" role="status"></div></section>
+
+<section id="s1" hidden><div class="kicker">2 · Preveja, calcule e interprete</div><h2>O que a cor permite calcular?</h2>
+<div class="grid"><div class="card"><h3>Explore a relação entre cor e energia</h3>
+<p>Antes de mover o controle: diminuir o comprimento de onda deve aumentar ou diminuir a energia?</p>
+<label for="wave">Comprimento de onda: <span id="waveLabel"></span></label><input id="wave" type="range" min="380" max="750" value="486" oninput="updateEnergy()">
+<div id="colorChip" class="color-chip"></div><div class="eq">c = λν &nbsp; · &nbsp; E = hν = hc/λ</div><div id="energyOutput"></div>
+<p class="small">A cor na tela é aproximada. A energia é calculada com o comprimento de onda indicado.</p></div>
+<div class="card"><h3>Uma transição do hidrogênio</h3><label for="transition">Transição de emissão</label>
+<select id="transition" onchange="updateTransition()"><option value="3">n = 3 → n = 2</option><option value="4">n = 4 → n = 2</option><option value="5">n = 5 → n = 2</option><option value="6">n = 6 → n = 2</option></select>
+<div class="eq">Eₙ = −2,180 × 10⁻¹⁸ Z²/n² J</div><div id="transitionOutput"></div>
+<p class="small">Modelo não relativístico para espécies com um elétron. Aqui, Z = 1. O cálculo despreza correções de massa reduzida e estrutura fina.</p></div></div>
+<div class="question">Agora sem copiar os resultados acima: calcule a energia de um fóton com λ = <strong>500 nm</strong>, em joules. Use h = 6,626 × 10⁻³⁴ J·s e c = 2,998 × 10⁸ m/s.</div>
+<label for="energyAnswer">Energia por fóton em J — exemplo de escrita: 4.2e-19</label><input id="energyAnswer" type="text" autocomplete="off" spellcheck="false" placeholder="Digite o seu resultado">
+<div class="actions"><button onclick="checkEnergy()">Verificar cálculo</button><button class="secondary" onclick="feedback('hint1',true,'Converta 500 nm para 500 × 10⁻⁹ m. Depois calcule E = hc/λ. As unidades J·s × m/s ÷ m resultam em J.')">Preciso de uma pista</button></div>
+<div id="hint1" class="feedback" role="status"></div><div id="f1" class="feedback" role="status" aria-live="polite"></div></section>
+
+<section id="s2" hidden><div class="kicker">3 · Questione o modelo clássico</div><h2>Podemos acompanhar o elétron como um planeta?</h2>
+<p>O elétron apresenta comportamento ondulatório. Além disso, posição e momento não podem ter dispersões arbitrariamente pequenas ao mesmo tempo.</p>
+<div class="grid"><div class="card"><h3>Comprimento de onda de de Broglie</h3><p>Considere um elétron acelerado a partir do repouso.</p>
+<label for="voltage">Diferença de potencial: <span id="voltageLabel"></span></label><input id="voltage" type="range" min="20" max="200" value="100" oninput="updateMatter()">
+<div class="eq">λ = h/p = h/√(2mₑeU)</div><p id="matterOutput" class="output"></p><p class="small">Modelo não relativístico. Aumentar U aumenta o momento e diminui o comprimento de onda.</p></div>
+<div class="card"><h3>Quanto podemos restringir a posição?</h3><label for="uncertainty">Dispersão da posição Δx: <span id="uncertaintyLabel"></span></label>
+<input id="uncertainty" type="range" min="0.05" max="0.5" step="0.01" value="0.1" oninput="updateMatter()">
+<div class="eq">Δx Δpₓ ≥ ℏ/2<br>Δvₓ ≥ h/(4πmₑΔx)</div><p id="uncertaintyOutput" class="output"></p>
+<p class="small">Δx e Δpₓ são desvios-padrão. O resultado mostrado é um limite inferior, não uma medida da velocidade do elétron.</p></div></div>
+<div class="question">Se Δx for reduzido à metade, o limite mínimo de Δvₓ:</div>
+<div class="actions">
+<button class="secondary" onclick="quiz(2,false,'Observe a relação inversa: Δx está no denominador. Reduzir Δx aumenta o limite mínimo.')">Cai à metade</button>
+<button onclick="quiz(2,true,'Correto: o limite mínimo dobra. A incerteza expressa uma propriedade quântica, não apenas uma limitação do aparelho.')">Dobra</button>
+<button class="secondary" onclick="quiz(2,false,'O limite depende de Δx. Experimente valores de 0,10 e 0,20 nm e compare.')">Permanece igual</button></div>
+<div id="f2" class="feedback" role="status" aria-live="polite"></div></section>
+
+<section id="s3" hidden><div class="kicker">4 · Construa uma interpretação visual</div><h2>Sem trajetória definida, o que podemos prever?</h2>
+<p>Vamos acumular resultados de medidas de posição para átomos de hidrogênio preparados no estado <strong>1s</strong>.</p>
+<div class="question">Preveja: uma medida isolada revela o padrão do orbital? O que deve acontecer quando acumulamos milhares de medidas?</div>
+<div class="actions"><button onclick="addPoints(200)">Adicionar 200 medidas</button><button onclick="addPoints(2000)">Adicionar 2.000 medidas</button><button class="secondary" onclick="resetCloud()">Recomeçar</button></div>
+<canvas id="cloud" width="600" height="600" aria-label="Projeção de medidas simuladas de posição do orbital 1s do hidrogênio"></canvas><p id="cloudCount" class="small" aria-live="polite"></p>
+<div class="eq">|ψ₁ₛ|² = e<sup>−2r/a₀</sup>/(πa₀³)<br>P(r) = 4r²e<sup>−2r/a₀</sup>/a₀³</div>
+<p class="small">Amostragem da distribuição tridimensional 1s, projetada no plano xz. Não é um corte do orbital nem uma trajetória. P(r) é a densidade de probabilidade radial; a₀ ≈ 0,0529 nm. A janela mostra x e z entre −6a₀ e +6a₀.</p>
+<div class="question">O que representa uma região com mais pontos?</div>
+<div class="actions"><button onclick="quiz(3,true,'Correto: uma frequência maior de resultados nessa região da projeção. A nuvem emerge de muitas medidas em sistemas preparados no mesmo estado.')">Maior frequência de resultados de posição</button>
+<button class="secondary" onclick="quiz(3,false,'Os pontos não estão ligados no tempo para formar um caminho. Cada ponto corresponde a uma nova medida simulada em um sistema preparado no estado 1s.')">Um trecho em que o elétron percorre sua órbita</button></div>
+<div id="f3" class="feedback" role="status" aria-live="polite"></div></section>
+
+<section id="s4" hidden><div class="kicker">5 · Dê significado à equação</div><h2>O que procuramos ao resolver Schrödinger?</h2>
+<p>Procuramos estados fisicamente admissíveis e suas energias. Explore os termos antes de interpretar a equação completa.</p>
+<div class="eq">Ĥψ = Eψ</div><div class="actions"><button class="term" onclick="explainTerm(0)">Ĥ · Hamiltoniano</button><button class="term" onclick="explainTerm(1)">ψ · Função de onda</button><button class="term" onclick="explainTerm(2)">E · Energia</button></div>
+<div id="termFeedback" class="feedback" role="status"></div>
+<div class="card"><h3>Para uma partícula em um potencial</h3><div class="eq">−(ℏ²/2m)∇²ψ + Vψ = Eψ</div>
+<p>O primeiro termo envolve a energia cinética; V representa a energia potencial. ∇² é a soma das segundas derivadas espaciais.</p>
+<div class="eq">∇²ψ = ∂²ψ/∂x² + ∂²ψ/∂y² + ∂²ψ/∂z²</div>
+<p class="small">Para um átomo com vários elétrons, a equação completa envolve todos eles. A descrição por orbitais individuais é uma aproximação.</p></div>
+<div class="grid"><div class="card"><h3>Densidade de probabilidade</h3><div class="eq">ρ = |ψ|²</div><p>Indica como a probabilidade se distribui no espaço. Para uma função espacial tridimensional normalizada, sua unidade é m⁻³.</p></div>
+<div class="card"><h3>Probabilidade em uma região</h3><div class="eq">P(Ω) = ∫<sub>Ω</sub> |ψ|² dτ</div><p>A integral soma a densidade dentro da região Ω. O resultado é adimensional e fica entre 0 e 1.</p></div></div>
+<div class="question">Uma função normalizada apresenta ∫<sub>todo o espaço</sub>|ψ|²dτ = 1. O que isso significa?</div>
+<div class="actions"><button class="secondary" onclick="quiz(4,false,'Normalizar a função não fixa a posição do elétron. A distribuição pode se estender por uma região do espaço.')">O elétron está parado em um ponto conhecido</button>
+<button onclick="quiz(4,true,'Correto: a probabilidade de encontrar o elétron em algum lugar de todo o espaço é 1. Isso não estabelece uma trajetória nem uma posição única.')">A probabilidade total é 100%</button></div>
+<div id="f4" class="feedback" role="status" aria-live="polite"></div></section>
+
+<section id="s5" hidden><div class="kicker">6 · Construa os estados permitidos</div><h2>É possível existir um orbital 2d?</h2>
+<p>Use as relações entre os números quânticos para decidir. Os controles permitem montar combinações inválidas para investigar o erro.</p>
+<div class="tags"><div><label for="qn">Principal n</label><select id="qn" onchange="showQuantum()"><option>1</option><option>2</option><option selected>3</option><option>4</option></select></div>
+<div><label for="ql">Azimutal ℓ</label><select id="ql" onchange="showQuantum()"><option value="0">0 · s</option><option value="1">1 · p</option><option value="2" selected>2 · d</option><option value="3">3 · f</option></select></div>
+<div><label for="qm">Magnético mℓ</label><select id="qm" onchange="showQuantum()"><option>-3</option><option>-2</option><option selected>-1</option><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
+<div><label for="qs">Spin mₛ</label><select id="qs" onchange="showQuantum()"><option value="0.5">+½</option><option value="-0.5">−½</option></select></div></div>
+<div class="actions"><button onclick="validateQuantum()">Verificar combinação</button><button class="secondary" onclick="try2d()">Investigar 2d</button></div>
+<div id="quantumFeedback" class="feedback" role="status"></div><div id="quantumInfo" class="card"></div>
+<div class="eq">ℓ = 0, …, n−1 &nbsp; · &nbsp; mℓ = −ℓ, …, +ℓ<br>Orbitais no subnível = 2ℓ+1<br>Elétrons no subnível ≤ 2(2ℓ+1)<br>Elétrons na camada ≤ 2n²</div>
+<p class="small">2n² indica capacidade máxima, não a ordem de preenchimento dos subníveis.</p>
+<div class="question">Construa mentalmente a camada n = 3: 3s tem 1 orbital, 3p tem 3 e 3d tem 5. Quantos elétrons cabem, no máximo, nessa camada?</div>
+<div class="actions"><button class="secondary" onclick="quiz(5,false,'Nove é a quantidade de orbitais: 1 + 3 + 5. Cada orbital comporta até dois elétrons.')">9</button>
+<button onclick="quiz(5,true,'Correto: 2 × (1 + 3 + 5) = 18 elétrons. Você obteve a capacidade a partir dos estados orbitais permitidos.')">18</button>
+<button class="secondary" onclick="quiz(5,false,'Some primeiro os orbitais 3s, 3p e 3d e depois aplique o limite de dois elétrons por orbital.')">32</button></div>
+<div id="f5" class="feedback" role="status" aria-live="polite"></div></section>
+
+<section id="s6" hidden><div class="kicker">7 · Monte, justifique e transfira</div><h2>Como os elétrons ocupam os estados?</h2>
+<p>Monte a configuração fundamental. Cada botão representa um orbital. Clique para alternar entre vazio, ↑, ↓ e ↑↓.</p>
+<label for="species">Escolha o átomo ou íon</label><select id="species" onchange="loadSpecies()"><option value="O">Oxigênio · O</option><option value="P">Fósforo · P</option><option value="Fe">Ferro · Fe</option><option value="Fe2">Ferro(II) · Fe²⁺</option><option value="Fe3">Ferro(III) · Fe³⁺</option><option value="Cu">Cobre · Cu</option><option value="Cu2">Cobre(II) · Cu²⁺</option></select>
+<div id="speciesInfo" class="question"></div><div id="orbitalBoard"></div>
+<p class="small">Quadro de ocupação, não uma escala de energia. A interface limita cada orbital a dois elétrons com spins opostos, incorporando o princípio de Pauli.</p>
+<div class="actions"><button onclick="checkDistribution()">Verificar e explicar</button><button class="secondary" onclick="loadSpecies()">Esvaziar orbitais</button><button class="secondary" onclick="feedback('hint6',true,'Confira a quantidade de elétrons. Em orbitais degenerados de um subnível, ocupe orbitais separados com spins paralelos antes de emparelhar. Nos cátions de Fe e Cu, remova os elétrons 4s antes dos 3d.')">Ver uma pista</button></div>
+<div id="hint6" class="feedback" role="status"></div><div id="f6" class="feedback" role="status" aria-live="polite"></div>
+<div class="card"><h3>Transfira para um problema da Engenharia Química</h3><p>Na oxidação do ferro, podem formar-se Fe²⁺ e Fe³⁺. Monte primeiro Fe, depois os dois íons.</p>
+<p><strong>Explique:</strong> quais elétrons foram removidos? Por que a sequência usual de preenchimento não pode ser simplesmente invertida para formar esses cátions?</p>
+<button class="secondary" onclick="feedback('transfer',true,'Fe: [Ar] 3d⁶ 4s²; Fe²⁺: [Ar] 3d⁶; Fe³⁺: [Ar] 3d⁵. Os elétrons 4s são removidos primeiro. As energias relativas dependem da espécie e da ocupação eletrônica; a regra prática de preenchimento não é uma escala fixa de energias. Essas configurações, isoladamente, não determinam a velocidade da corrosão.')">Comparar com a explicação</button>
+<div id="transfer" class="feedback" role="status"></div></div>
+<p class="small">Os diagramas d seguem o modelo de átomo/íon livre. Em complexos, o campo dos ligantes pode modificar a ocupação e o spin.</p></section>
+
+<div class="steps-footer"><button id="previous" class="secondary" onclick="go(current-1)">← Anterior</button><span id="position" class="small"></span><button id="next" onclick="go(current+1)">Próxima →</button></div>
+<footer>Navegação livre: as verificações registram o progresso nesta sessão, mas não bloqueiam a exploração. Nenhuma resposta é enviada a um servidor; ao recarregar, o progresso é reiniciado.<br>Para estudar: faça uma previsão, explore, calcule e escreva sua explicação antes de consultar o feedback.</footer>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const H=6.62607015e-34,C=299792458,ME=9.1093837e-31,ECH=1.602176634e-19,NA=6.02214076e23,EH=2.179872e-18;
+const labels=["Fenômeno","Energia","Onda e incerteza","Orbital","Schrödinger","Números quânticos","Distribuição"];
+let current=0;const completed=new Set();
+function sci(value,d=3){const parts=value.toExponential(d-1).split("e");const sup={"-":"⁻","+":"","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};return parts[0].replace(".",",")+" × 10"+[...parts[1]].map(c=>sup[c]).join("");}
+function decimal(value,d=2){return value.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});}
+function feedback(id,ok,text){const el=$(id);el.className="feedback "+(ok?"ok":"no");el.textContent=text;}
+function finish(stage){completed.add(stage);$("progress").value=completed.size;$("progressText").textContent=completed.size+" de 7 verificações concluídas";document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("done",completed.has(i)));}
+function quiz(stage,ok,text){feedback("f"+stage,ok,text);if(ok)finish(stage);}
+function go(index){if(index<0||index>=labels.length)return;current=index;labels.forEach((_,i)=>{$("s"+i).hidden=i!==index;const b=$("tab"+i);if(i===index)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current");});$("previous").disabled=index===0;$("next").disabled=index===labels.length-1;$("position").textContent="Etapa "+(index+1)+" de "+labels.length;const active=$("tab"+index);if(active.scrollIntoView)active.scrollIntoView({block:"nearest",inline:"nearest"});}
+labels.forEach((label,i)=>{const b=document.createElement("button");b.id="tab"+i;b.textContent=(i+1)+". "+label;b.onclick=()=>go(i);$("nav").appendChild(b);});
+function wavelengthColor(w){let r=0,g=0,b=0;if(w<440){r=(440-w)/60;b=1}else if(w<490){g=(w-440)/50;b=1}else if(w<510){g=1;b=(510-w)/20}else if(w<580){r=(w-510)/70;g=1}else if(w<645){r=1;g=(645-w)/65}else{r=1}const f=w<420?.3+.7*(w-380)/40:w>700?.3+.7*(780-w)/80:1;return "rgb("+[r,g,b].map(v=>Math.round(255*Math.pow(Math.max(0,v*f),.8))).join(",")+")";}
+function predictSpectrum(ok){$("spectrumArea").hidden=false;drawSpectrum();quiz(0,ok,ok?"Sua previsão é consistente: diferenças específicas de energia produzem fótons de energias específicas e linhas separadas. Compare os dois espectros.":"Compare os espectros: as transições ligadas consideradas não podem emitir qualquer energia. Por isso aparecem linhas separadas. Revise sua previsão e tente novamente.");}
+function drawSpectrum(){const ctx=$("spectrum").getContext("2d");ctx.fillStyle="#101f36";ctx.fillRect(0,0,900,250);ctx.font="16px system-ui";ctx.fillStyle="#e3edf9";ctx.fillText("Referência contínua",30,27);for(let x=0;x<840;x++){ctx.fillStyle=wavelengthColor(380+x/840*370);ctx.fillRect(x+30,40,1.5,43)}ctx.fillStyle="#e3edf9";ctx.fillText("Hidrogênio · linhas de emissão",30,117);[3,4,5,6].forEach(n=>{const wave=H*C/(EH*(1/4-1/n**2))*1e9,x=30+(wave-380)/370*840;ctx.fillStyle=wavelengthColor(wave);ctx.fillRect(x-2,135,4,52);ctx.save();ctx.translate(x,207);ctx.rotate(-.45);ctx.fillStyle="#e3edf9";ctx.font="14px system-ui";ctx.fillText(Math.round(wave)+" nm",0,0);ctx.restore();});}
+function updateEnergy(){const w=+$("wave").value,energy=H*C/(w*1e-9),nu=C/(w*1e-9);$("waveLabel").textContent=w+" nm";$("colorChip").style.background=wavelengthColor(w);$("energyOutput").innerHTML="<p>Frequência: <strong>"+sci(nu)+" Hz</strong></p><p>Energia por fóton: <strong>"+sci(energy)+" J</strong></p><p>Por mol de fótons: <strong>"+decimal(energy*NA/1000,1)+" kJ/mol</strong></p>";}
+function updateTransition(){const n=+$("transition").value,initial=-EH/n**2,final=-EH/4,delta=final-initial;$("transitionOutput").innerHTML="<p>E inicial: "+sci(initial)+" J</p><p>E final: "+sci(final)+" J</p><p>ΔE do átomo: <strong>"+sci(delta)+" J</strong></p><p>E do fóton: <strong>"+sci(-delta)+" J</strong></p><p>λ emitido: <strong>"+decimal(H*C/(-delta)*1e9,1)+" nm</strong></p><p>O átomo perde energia; a energia do fóton é positiva.</p>";}
+function checkEnergy(){const raw=$("energyAnswer").value.trim().replace(",",".");const value=Number(raw);if(!raw||!Number.isFinite(value)){feedback("f1",false,"Digite um número válido, por exemplo 4.2e-19.");return;}const expected=H*C/(500e-9),ok=Math.abs(value-expected)/expected<.03;quiz(1,ok,ok?"Correto: aproximadamente 3,97 × 10⁻¹⁹ J por fóton. Esse valor corresponde à diferença de energia da transição, não à energia total de um estado.":"Confira a conversão de nm para m e use E = hc/λ. O resultado deve ser positivo e da ordem de 10⁻¹⁹ J. Use a pista e tente novamente.");}
+function updateMatter(){const u=+$("voltage").value,dx=+$("uncertainty").value;$("voltageLabel").textContent=u+" V";$("matterOutput").textContent="λ = "+decimal(H/Math.sqrt(2*ME*ECH*u)*1e9,3)+" nm";$("uncertaintyLabel").textContent=decimal(dx,2)+" nm";$("uncertaintyOutput").textContent="Δvₓ mínimo = "+sci(H/(4*Math.PI*ME*dx*1e-9))+" m/s";}
+let samples=0,outside=0;
+function resetCloud(){samples=0;outside=0;const ctx=$("cloud").getContext("2d");ctx.fillStyle="#101f36";ctx.fillRect(0,0,600,600);ctx.strokeStyle="#536680";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,300);ctx.lineTo(600,300);ctx.moveTo(300,0);ctx.lineTo(300,600);ctx.stroke();ctx.fillStyle="#d2e0f2";ctx.font="14px system-ui";ctx.fillText("x/a₀",552,320);ctx.fillText("z/a₀",310,20);ctx.fillText("−6",6,320);ctx.fillText("+6",566,285);ctx.fillText("+6",309,43);ctx.fillText("−6",309,583);ctx.fillText("0",309,319);cloudLabel();}
+function cloudLabel(){$("cloudCount").textContent=samples.toLocaleString("pt-BR")+" medidas simuladas. "+outside+" fora da janela de visualização. O centro marca a posição do núcleo.";}
+function addPoints(n){const ctx=$("cloud").getContext("2d");ctx.fillStyle="rgba(112,224,246,0.25)";for(let i=0;i<n;i++){/* r/a0 ~ Gamma(3,1/2); direção isotrópica. */const r=-(Math.log(Math.max(Math.random(),1e-15))+Math.log(Math.max(Math.random(),1e-15))+Math.log(Math.max(Math.random(),1e-15)))/2;const mu=2*Math.random()-1,phi=2*Math.PI*Math.random(),x=r*Math.sqrt(1-mu*mu)*Math.cos(phi),z=r*mu;samples++;if(Math.abs(x)>6||Math.abs(z)>6){outside++;continue}ctx.beginPath();ctx.arc(300+x*50,300-z*50,1.25,0,2*Math.PI);ctx.fill();}cloudLabel();}
+const terms=["Ĥ é o operador Hamiltoniano. Reúne as contribuições de energia cinética e potencial do sistema.","ψ é a função de onda. Seu módulo ao quadrado fornece a densidade de probabilidade espacial; ψ não é uma trajetória.","E é a energia associada ao estado estacionário. A equação seleciona funções admissíveis e seus valores de energia."];
+function explainTerm(i){feedback("termFeedback",true,terms[i]);}
+function showQuantum(){const n=+$("qn").value,l=+$("ql").value;$("quantumFeedback").textContent="";const sublevels=Array.from({length:n},(_,i)=>n+"spdf"[i]).join(", ");$("quantumInfo").innerHTML="<h3>Camada n = "+n+"</h3><p>Subníveis permitidos: <strong>"+sublevels+"</strong>.</p><p>Total: <strong>"+n*n+" orbitais</strong>; capacidade máxima: <strong>"+2*n*n+" elétrons</strong>.</p>"+(l<n?"<p>No subnível "+n+"spdf"[l]+": "+(2*l+1)+" orbitais e até "+2*(2*l+1)+" elétrons.</p>":"<p>O subnível escolhido não existe nessa camada.</p>");}
+function validateQuantum(){const n=+$("qn").value,l=+$("ql").value,m=+$("qm").value,spin=+$("qs").value;if(l>n-1){feedback("quantumFeedback",false,"Combinação proibida: para n = "+n+", ℓ deve variar de 0 até "+(n-1)+". Portanto, "+n+"spdf"[l]+" não é um subnível permitido.");return;}if(Math.abs(m)>l){feedback("quantumFeedback",false,"Combinação proibida: para ℓ = "+l+", mℓ deve estar entre "+(-l)+" e "+l+".");return;}feedback("quantumFeedback",true,"Combinação permitida: n = "+n+", ℓ = "+l+", mℓ = "+m+", mₛ = "+(spin>0?"+½":"−½")+". O elétron ocupa um orbital "+n+"spdf"[l]+". Os números quânticos não indicam uma trajetória.");}
+function try2d(){$("qn").value="2";$("ql").value="2";$("qm").value="0";showQuantum();validateQuantum();}
+const cases={
+O:{name:"O",z:8,q:0,core:"[He] 2s²",groups:[["2p",3,4]],answer:"1s² 2s² 2p⁴",note:"No subnível 2p há dois elétrons desemparelhados."},
+P:{name:"P",z:15,q:0,core:"[Ne] 3s²",groups:[["3p",3,3]],answer:"[Ne] 3s² 3p³",note:"Os três elétrons 3p ocupam orbitais diferentes com spins paralelos."},
+Fe:{name:"Fe",z:26,q:0,core:"[Ar]",groups:[["3d",5,6],["4s",1,2]],answer:"[Ar] 3d⁶ 4s²",note:"Compare esta configuração com Fe²⁺: os elétrons 4s serão removidos primeiro."},
+Fe2:{name:"Fe²⁺",z:26,q:2,core:"[Ar]",groups:[["3d",5,6],["4s",1,0]],answer:"[Ar] 3d⁶",note:"Os dois elétrons 4s foram removidos; o subnível 3d permanece com seis elétrons."},
+Fe3:{name:"Fe³⁺",z:26,q:3,core:"[Ar]",groups:[["3d",5,5],["4s",1,0]],answer:"[Ar] 3d⁵",note:"Foram removidos dois elétrons 4s e um elétron 3d."},
+Cu:{name:"Cu",z:29,q:0,core:"[Ar]",groups:[["3d",5,10],["4s",1,1]],answer:"[Ar] 3d¹⁰ 4s¹",note:"O cobre é uma exceção à aplicação direta da sequência prática: sua configuração fundamental é 3d¹⁰ 4s¹."},
+Cu2:{name:"Cu²⁺",z:29,q:2,core:"[Ar]",groups:[["3d",5,9],["4s",1,0]],answer:"[Ar] 3d⁹",note:"A partir de Cu, remove-se o elétron 4s e depois um elétron 3d."}};
+let occupation=[];const symbols=["—","↑","↓","↑↓"];
+function countElectrons(a){return a.reduce((sum,v)=>sum+(v===3?2:v===0?0:1),0);}
+function loadSpecies(){const s=cases[$("species").value];occupation=s.groups.map(g=>Array(g[1]).fill(0));$("f6").textContent="";$("hint6").textContent="";$("speciesInfo").textContent=s.name+" tem Z = "+s.z+" e "+(s.z-s.q)+" elétrons. Parte já preenchida: "+s.core+". Distribua "+s.groups.reduce((sum,g)=>sum+g[2],0)+" elétrons nos orbitais abaixo.";drawOrbitals();}
+function drawOrbitals(){const s=cases[$("species").value],board=$("orbitalBoard");board.replaceChildren();s.groups.forEach((g,gi)=>{const title=document.createElement("h3");title.textContent=g[0]+" · "+countElectrons(occupation[gi])+" elétrons colocados";board.appendChild(title);const row=document.createElement("div");row.className="orbitals";occupation[gi].forEach((state,oi)=>{const b=document.createElement("button");b.className="orbital";b.innerHTML=symbols[state]+"<small>orbital "+(oi+1)+"</small>";b.setAttribute("aria-label",g[0]+", orbital "+(oi+1)+", estado "+["vazio","spin para cima","spin para baixo","par de spins opostos"][state]+". Clique para alternar.");b.onclick=()=>{occupation[gi][oi]=(occupation[gi][oi]+1)%4;$("f6").textContent="";drawOrbitals();board.querySelectorAll(".orbitals")[gi].children[oi].focus();};row.appendChild(b);});board.appendChild(row);});}
+function checkDistribution(){const s=cases[$("species").value],total=occupation.reduce((sum,a)=>sum+countElectrons(a),0),target=s.groups.reduce((sum,g)=>sum+g[2],0);if(total!==target){quiz(6,false,"Você colocou "+total+" elétrons; esta parte da configuração precisa de "+target+". Primeiro ajuste a quantidade.");return;}for(let i=0;i<s.groups.length;i++){const g=s.groups[i],a=occupation[i],count=countElectrons(a);if(count!==g[2]){quiz(6,false,s.groups.length>1?"O total está correto, mas a ocupação de 3d e 4s precisa ser revista. Nos cátions, retire 4s antes de 3d. Para o Cu neutro, lembre a exceção 3d¹⁰ 4s¹.":"Revise a quantidade de elétrons nesse subnível.");return;}const singles=a.filter(v=>v===1||v===2),expectedSingles=Math.min(count,2*a.length-count);if(singles.length!==expectedSingles){quiz(6,false,"Revise Hund em "+g[0]+": ocupe orbitais diferentes antes de formar pares. Você emparelhou elétrons cedo demais.");return;}if(new Set(singles).size>1){quiz(6,false,"Revise Hund em "+g[0]+": os elétrons desemparelhados devem ter spins paralelos. Todos para cima ou todos para baixo são representações válidas.");return;}}quiz(6,true,"Configuração correta: "+s.answer+". "+s.note);}
+go(0);updateEnergy();updateTransition();updateMatter();resetCloud();showQuantum();loadSpecies();
+</script>
+</body>
+</html>
